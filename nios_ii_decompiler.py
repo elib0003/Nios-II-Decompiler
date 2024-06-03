@@ -148,14 +148,17 @@ def binary_to_nios(instr: str) -> str:
     """
     Converts a 32-bit binary integer to a Nios II assembly instruction.
     """
+    # remove '0b'
+    instr = instr[2:]
     # find opcode
     op_row = int(instr[-6:-4], 2)
     op_col = int(instr[-4:], 2)
     op = opcodes[op_row][op_col]
     
-    if op == 'R-type': #r-type
-        opx_row = int(instr[-14:-11])
-        opx_col = int(instr[-11:-7])
+    if op == 'R-type': #r-type - find opx
+        # opx = instr[16:11]
+        opx_row = int(instr[-17:-15], 2)
+        opx_col = int(instr[-15:-11], 2)
         opx = opxcodes[opx_row][opx_col]
         a = int(instr[0:5], 2)
         b = int(instr[5:10], 2)
@@ -256,15 +259,12 @@ def nios_convert(instr: str) -> str:
                     opx = int(f"{i}{j}", 16)
 
         a = operands[1][2:] if '$' in operands[1] else operands[1][1:]
-        a = int(a)
-        b = operands[2][2:] if '$' in operands[0] else operands[0][1:]
-        b = int(b)
-        c = operands[0][2:] if '$' in operands[2] else operands[2][1:]
-        c = int(c)
+        a = bin(int(a))[2:]
+        b = operands[2][2:] if '$' in operands[0] else operands[2][1:]
+        b = bin(int(b))[2:]
+        c = operands[0][2:] if '$' in operands[2] else operands[0][1:]
+        c = bin(int(c))[2:]
         
-        a = bin(a)[2:]
-        b = bin(b)[2:]
-        c = bin(c)[2:]
         opx = bin(opx)[2:]
         op = bin(op)[2:]
 
@@ -272,7 +272,7 @@ def nios_convert(instr: str) -> str:
         a = '0'*(5-len(a)) + a
         b = '0'*(5-len(b)) + b
         c = '0'*(5-len(c)) + c
-        opx = '0'*(11-len(opx)) + opx
+        opx = opx + '0'*(11-len(opx)) # pad to the right
         op = '0'*(6-len(op)) + op
     
         # r-type: a[5] b[5] c[5] opx[11] op[6]
