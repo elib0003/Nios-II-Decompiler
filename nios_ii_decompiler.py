@@ -257,9 +257,9 @@ def nios_convert(instr: str) -> str:
 
         a = operands[1][2:] if '$' in operands[1] else operands[1][1:]
         a = int(a)
-        b = operands[0][2:] if '$' in operands[0] else operands[0][1:]
+        b = operands[2][2:] if '$' in operands[0] else operands[0][1:]
         b = int(b)
-        c = operands[2][2:] if '$' in operands[2] else operands[2][1:]
+        c = operands[0][2:] if '$' in operands[2] else operands[2][1:]
         c = int(c)
         
         a = bin(a)[2:]
